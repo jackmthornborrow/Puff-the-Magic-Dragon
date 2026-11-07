@@ -2,3 +2,4 @@
 .vscode/
 *.bin
 !partitions_ota.csv
+docs/parts-photos.html
