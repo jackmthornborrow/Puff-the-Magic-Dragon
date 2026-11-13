@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" font-family="Helvetica,Arial,sans-serif" font-size="14">
+<rect fill="#ffffff"/>
+<text x="20" y="30" font-size="20" font-weight="bold" fill="#111">Stage 1 wiring: XIAO ESP32-C3, top view, USB-C at the top</text>
+<rect x="420" y="90" width="160" height="330" rx="12" fill="#1d1d1f"/>
+<rect x="470" y="72" width="60" height="40" rx="6" fill="#b9bcc2" stroke="#555"/>
+<text x="500" y="98" text-anchor="middle" font-size="11" fill="#111">USB-C</text>
+<text x="500" y="280" text-anchor="middle" fill="#fff" font-size="15">XIAO</text>
+<text x="500" y="300" text-anchor="middle" fill="#fff" font-size="13">ESP32-C3</text>
+<circle cx="420" cy="135" r="7" fill="#d9a520"/><text x="434" y="140" fill="#fff">D0</text>
+<circle cx="580" cy="135" r="7" fill="#d9a520"/><text x="566" y="140" fill="#fff" text-anchor="end">5V</text>
+<circle cx="420" cy="177" r="7" fill="#d9a520"/><text x="434" y="182" fill="#fff">D1</text>
+<circle cx="580" cy="177" r="7" fill="#d9a520"/><text x="566" y="182" fill="#fff" text-anchor="end">GND</text>
+<circle cx="420" cy="219" r="7" fill="#d9a520"/><text x="434" y="224" fill="#fff">D2</text>
+<circle cx="580" cy="219" r="7" fill="#d9a520"/><text x="566" y="224" fill="#fff" text-anchor="end">3V3</text>
+<circle cx="420" cy="261" r="7" fill="#d9a520"/><text x="434" y="266" fill="#fff">D3</text>
+<circle cx="580" cy="261" r="7" fill="#d9a520"/><text x="566" y="266" fill="#fff" text-anchor="end">D10</text>
+<circle cx="420" cy="303" r="7" fill="#d9a520"/><text x="434" y="308" fill="#fff">D4</text>
+<circle cx="580" cy="303" r="7" fill="#d9a520"/><text x="566" y="308" fill="#fff" text-anchor="end">D9</text>
+<circle cx="420" cy="345" r="7" fill="#d9a520"/><text x="434" y="350" fill="#fff">D5</text>
+<circle cx="580" cy="345" r="7" fill="#d9a520"/><text x="566" y="350" fill="#fff" text-anchor="end">D8</text>
+<circle cx="420" cy="387" r="7" fill="#d9a520"/><text x="434" y="392" fill="#fff">D6</text>
+<circle cx="580" cy="387" r="7" fill="#d9a520"/><text x="566" y="392" fill="#fff" text-anchor="end">D7</text>
+<polyline points="420,219 300,219" fill="none" stroke="#2e7d32" stroke-width="3" stroke-linejoin="round"/>
+<rect x="242" y="210" width="56" height="18" rx="3" fill="#f3e3b3" stroke="#7a5c00"/>
+<text x="270" y="224" text-anchor="middle" font-size="12" fill="#111">330 Ω</text>
+<polyline points="242,219 190,219" fill="none" stroke="#2e7d32" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="170" cy="219" r="13" fill="#7bd88f" stroke="#333"/>
+<text x="170" y="199" text-anchor="middle" font-size="12" fill="#111">status LED, long leg to resistor</text>
+<polyline points="157,219 90,219" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<line x1="90" y1="219" x2="90" y2="229" stroke="#111" stroke-width="3"/>
+<rect x="68" y="229" width="44" height="18" rx="3" fill="#111"/><text x="90" y="242" text-anchor="middle" fill="#fff" font-size="11">GND</text>
+<circle cx="370" cy="197" r="12" fill="#1565c0"/><text x="370" y="202" text-anchor="middle" fill="#fff" font-weight="bold" font-size="13">3</text>
+<polyline points="420,177 250,177" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round"/>
+<rect x="190" y="163" width="60" height="28" rx="4" fill="#ddd" stroke="#333"/><text x="220" y="182" text-anchor="middle" font-size="12" fill="#111">button</text>
+<polyline points="190,177 90,177 90,171" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<rect x="68" y="143" width="44" height="18" rx="3" fill="#111"/><text x="90" y="156" text-anchor="middle" fill="#fff" font-size="11">GND</text>
+<circle cx="370" cy="155" r="12" fill="#1565c0"/><text x="370" y="160" text-anchor="middle" fill="#fff" font-weight="bold" font-size="13">5</text>
+<text x="130" y="155" font-size="12" fill="#6a1b9a">5A: button wiring for today's firmware</text>
+<polyline points="420,261 330,261" fill="none" stroke="#ef6c00" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="330" cy="261" r="4" fill="#ef6c00"/>
+<polyline points="330,261 330,306 270,306" fill="none" stroke="#ef6c00" stroke-width="3" stroke-linejoin="round"/>
+<rect x="214" y="297" width="56" height="18" rx="3" fill="#f3e3b3" stroke="#7a5c00"/>
+<text x="242" y="311" text-anchor="middle" font-size="12" fill="#111">20 kΩ</text>
+<polyline points="214,306 90,306" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<line x1="90" y1="306" x2="90" y2="316" stroke="#111" stroke-width="3"/>
+<rect x="68" y="316" width="44" height="18" rx="3" fill="#111"/><text x="90" y="329" text-anchor="middle" fill="#fff" font-size="11">GND</text>
+<polyline points="330,261 300,261" fill="none" stroke="#ef6c00" stroke-width="3" stroke-linejoin="round"/>
+<rect x="244" y="252" width="56" height="18" rx="3" fill="#f3e3b3" stroke="#7a5c00"/>
+<text x="272" y="266" text-anchor="middle" font-size="12" fill="#111">10 kΩ</text>
+<polyline points="244,261 200,261" fill="none" stroke="#c62828" stroke-width="3" stroke-linejoin="round"/>
+<rect x="158" y="251" width="44" height="20" rx="3" fill="#c62828"/><text x="180" y="265" text-anchor="middle" fill="#fff" font-size="11">5V</text>
+<circle cx="370" cy="239" r="12" fill="#1565c0"/><text x="370" y="244" text-anchor="middle" fill="#fff" font-weight="bold" font-size="13">6</text>
+<rect x="60" y="385" width="170" height="92" rx="6" fill="#0d2a4a" stroke="#333"/>
+<rect x="78" y="415" width="134" height="52" fill="#000"/><text x="145" y="446" text-anchor="middle" fill="#fff" font-size="12">0.96" OLED</text>
+<circle cx="95" cy="397" r="5" fill="#d9a520"/><text x="95" y="413" text-anchor="middle" fill="#fff" font-size="9">GND</text>
+<circle cx="128" cy="397" r="5" fill="#d9a520"/><text x="128" y="413" text-anchor="middle" fill="#fff" font-size="9">VCC</text>
+<circle cx="161" cy="397" r="5" fill="#d9a520"/><text x="161" y="413" text-anchor="middle" fill="#fff" font-size="9">SCL</text>
+<circle cx="194" cy="397" r="5" fill="#d9a520"/><text x="194" y="413" text-anchor="middle" fill="#fff" font-size="9">SDA</text>
+<polyline points="420,303 360,303 360,365 194,365 194,392" fill="none" stroke="#1565c0" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="420,345 380,345 380,375 161,375 161,392" fill="none" stroke="#f9a825" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="128,392 128,357 40,357" fill="none" stroke="#c62828" stroke-width="3" stroke-linejoin="round"/>
+<rect x="18" y="347" width="44" height="20" rx="3" fill="#c62828"/><text x="40" y="361" text-anchor="middle" fill="#fff" font-size="11">3V3</text>
+<polyline points="95,392 95,371 40,371 40,381" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<rect x="18" y="381" width="44" height="18" rx="3" fill="#111"/><text x="40" y="394" text-anchor="middle" fill="#fff" font-size="11">GND</text>
+<circle cx="395" cy="281" r="12" fill="#1565c0"/><text x="395" y="286" text-anchor="middle" fill="#fff" font-weight="bold" font-size="13">7</text>
+<text x="60" y="495" font-size="12" fill="#555">Check the pin order printed on your OLED: some are VCC-GND-SCL-SDA.</text>
+<polyline points="580,177 700,177" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<rect x="700" y="167" width="230" height="20" fill="#111"/><text x="815" y="181" text-anchor="middle" fill="#fff" font-size="12">breadboard − rail (GND)</text>
+<polyline points="580,219 700,219" fill="none" stroke="#c62828" stroke-width="3" stroke-linejoin="round"/>
+<rect x="700" y="209" width="230" height="20" fill="#c62828"/><text x="815" y="223" text-anchor="middle" fill="#fff" font-size="12">breadboard + rail (3V3)</text>
+<circle cx="650" cy="197" r="12" fill="#1565c0"/><text x="650" y="202" text-anchor="middle" fill="#fff" font-weight="bold" font-size="13">2</text>
+<polyline points="580,135 660,135" fill="none" stroke="#c62828" stroke-width="3" stroke-linejoin="round" stroke-dasharray="6 4"/>
+<text x="668" y="140" font-size="12" fill="#555">5V: only to the 10 kΩ in step 6. Never to a rail.</text>
+<polyline points="580,261 650,261" fill="none" stroke="#d84315" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="620" cy="261" r="4" fill="#d84315"/>
+<rect x="650" y="252" width="56" height="18" rx="3" fill="#f3e3b3" stroke="#7a5c00"/>
+<text x="678" y="266" text-anchor="middle" font-size="12" fill="#111">330 Ω</text>
+<polyline points="706,261 760,261" fill="none" stroke="#d84315" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="780" cy="261" r="13" fill="#ff8a65" stroke="#333"/>
+<text x="780" y="241" text-anchor="middle" font-size="12" fill="#111">"coil" LED, long leg to resistor</text>
+<polyline points="793,261 880,261" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<line x1="880" y1="261" x2="880" y2="271" stroke="#111" stroke-width="3"/>
+<rect x="858" y="271" width="44" height="18" rx="3" fill="#111"/><text x="880" y="284" text-anchor="middle" fill="#fff" font-size="11">GND</text>
+<polyline points="620,261 620,321 650,321" fill="none" stroke="#d84315" stroke-width="3" stroke-linejoin="round"/>
+<rect x="650" y="312" width="56" height="18" rx="3" fill="#f3e3b3" stroke="#7a5c00"/>
+<text x="678" y="326" text-anchor="middle" font-size="12" fill="#111">10 kΩ</text>
+<polyline points="706,321 760,321" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<line x1="760" y1="321" x2="760" y2="331" stroke="#111" stroke-width="3"/>
+<rect x="738" y="331" width="44" height="18" rx="3" fill="#111"/><text x="760" y="344" text-anchor="middle" fill="#fff" font-size="11">GND</text>
+<text x="800" y="317" font-size="12" fill="#555">pull-down: keeps the</text><text x="800" y="333" font-size="12" fill="#555">output off during boot</text>
+<circle cx="600" cy="239" r="12" fill="#1565c0"/><text x="600" y="244" text-anchor="middle" fill="#fff" font-weight="bold" font-size="13">4</text>
+<text x="600" y="392" font-size="12" fill="#777">D0, D6, D7, D8, D9: leave empty in stage 1</text>
+<rect x="560" y="470" width="420" height="150" rx="8" fill="#f6f2fb" stroke="#6a1b9a"/>
+<text x="572" y="492" font-size="13" font-weight="bold" fill="#6a1b9a">5B: final button wiring (needs the firmware change)</text>
+<rect x="578" y="530" width="44" height="20" rx="3" fill="#c62828"/><text x="600" y="544" text-anchor="middle" fill="#fff" font-size="11">3V3</text>
+<polyline points="622,540 670,540" fill="none" stroke="#c62828" stroke-width="3" stroke-linejoin="round"/>
+<rect x="670" y="526" width="60" height="28" rx="4" fill="#ddd" stroke="#333"/><text x="700" y="545" text-anchor="middle" font-size="12" fill="#111">button</text>
+<polyline points="730,540 860,540" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="775" cy="540" r="4" fill="#6a1b9a"/>
+<rect x="860" y="529" width="40" height="22" rx="3" fill="#1d1d1f"/><text x="880" y="545" text-anchor="middle" fill="#fff" font-size="12">D1</text>
+<polyline points="775,540 775,570 800,570" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round"/>
+<rect x="800" y="561" width="56" height="18" rx="3" fill="#f3e3b3" stroke="#7a5c00"/>
+<text x="828" y="575" text-anchor="middle" font-size="12" fill="#111">10 kΩ</text>
+<polyline points="856,570 910,570" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<line x1="910" y1="570" x2="910" y2="580" stroke="#111" stroke-width="3"/>
+<rect x="888" y="580" width="44" height="18" rx="3" fill="#111"/><text x="910" y="593" text-anchor="middle" fill="#fff" font-size="11">GND</text>
+<text x="572" y="610" font-size="11" fill="#555">Pressed = HIGH. In stage 2 the same 3V3 feeds the interlock FET.</text>
+</svg>

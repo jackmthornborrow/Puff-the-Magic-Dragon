@@ -3,6 +3,13 @@
 Hardware plan for stages 1–2, agreed 2026-11-07. Firmware details are in the
 top-level README; this file covers parts, pins and the power path.
 
+Build guides:
+[stage 1 breadboard](stage1-breadboard.md) ·
+[stage 2 power board](stage2-perfboard.md) ·
+[first-power checklist](first-power-checklist.md) ·
+[stage 3 connector](stage3-510-connector.md) ·
+[review notes](review-notes.md)
+
 ## Pin map (XIAO ESP32-C3)
 
 | Pin | GPIO | Use | Notes |
@@ -10,7 +17,7 @@ top-level README; this file covers parts, pins and the power path.
 | D10 | 10 | Main MOSFET gate (stage 1: "coil" LED) | 100 Ω series, **10 kΩ pull-down to GND** so it stays off during boot/reset |
 | D2 | 4 | Status LED | 330 Ω → LED → GND. The XIAO C3 has no user LED |
 | D1 | 3 | Fire button, **active-high** | Button connects 3V3 → D1 with a 10 kΩ pull-down. The same 3V3 drives the interlock FET gate (see below). Can wake from deep sleep (the C3 only wakes on GPIO0–5) |
-| D0 | 2 | Battery voltage divider | ADC1. 220 k / 220 k + 100 nF. Strapping pin, input only |
+| D0 | 2 | Battery voltage divider (optional) | ADC1. 220 k / 220 k + 100 nF. Strapping pin, input only. The INA260's bus voltage is the better battery reading |
 | D3 | 5 | USB-present sense | 5 V → 10 k / 20 k divider → D3. Needed for "never fire while charging" |
 | D4 / D5 | 6 / 7 | I2C SDA / SCL | INA260 (0x40) + SSD1306 OLED (0x3C) |
 | D7 | 20 | Resistance-check MOSFET gate | 100 kΩ pull-down |
@@ -25,20 +32,23 @@ top-level README; this file covers parts, pins and the power path.
 ## Power path (stage 2)
 
 ```
-Cell+ ─ 5 A fuse ─ protection board ─┬─ XIAO BAT+  (470 µF bulk cap here)
-                                     └─ INA260 ─ coil+ (dummy 1.5 Ω)
-                                                  │
-                                                coil−
-                                                  │
-                     ┌────────────────────────────┴─────────────┐
+Cell+ ─ 5 A fuse ─ B+ [protection board] P+ ─┬─ XIAO BAT+  (470 µF bulk cap here)
+                                             └─ INA260 ─ coil+ (dummy 1.5 Ω)
+                                                          │
+                                                        coil−
+                                                          │
+                     ┌────────────────────────────────────┴─────┐
                interlock FET (gate = button 3V3 via 1 k,   15 Ω 1 W
                               100 k pull-down)                  │
                      │                                   ohm-check FET (D7)
                main FET (D10, PWM 20 kHz)                       │
                      │                                          │
-Cell− ───────────────┴──────────────────────────────────────────┘
+GND = P− ────────────┴──────────────────────────────────────────┘
+Cell− ─ B− [protection board]      (cell− connects to nothing else)
 ```
 
+- **Ground is P−:** the protection board switches the negative side, so every
+  "GND" in this project is its P− pad. The cell's negative goes only to B−.
 - **Hardware interlock:** the coil can only conduct while the button is physically held *and* firmware drives D10. If the firmware hangs, releasing the button stops the fire.
 - **Resistance check:** turn on the D7 FET only, then read current with the INA260. R_coil = V / I − 15 Ω − FET resistance. That's about 0.25 A even into a dead short. Fire the main FET only when R is about 0.8–4 Ω.
 - **Peak current:** with PWM every pulse is full cell voltage: 4.2 V / 1.2 Ω ≈ 3.5 A. Size everything for ≥ 4 A.
@@ -46,6 +56,9 @@ Cell− ───────────────┴────────
 - **High-current wiring:** use 18 AWG, soldered. Don't run it through the breadboard, whose contacts are rated about 1 A.
 - **Dummy load:** the HS25 is only rated 25 W when bolted to an aluminium plate or heatsink.
 - **Cell:** your own 18650 must be a genuine high-drain cell rated ≥ 10 A continuous (e.g. Molicel P28A, Samsung 30Q, Sony VTC6). Never solder to it; use the holder.
+- **Charging:** USB-C on the XIAO charges the cell through its BAT pads at
+  about 0.38 A (roughly 8 hours for an empty P28A). The BAT pads are on the
+  underside of the XIAO. There is no charge-status signal.
 - **Charge / first-fire tests:** do them in a steel tin with the lid left loose (never sealed), on a non-flammable surface away from anything that can burn, and stay nearby.
 
 ## Parts list
@@ -97,4 +110,5 @@ $10 flat-rate shipping.
   *switched negative* and the centre pin is always at battery voltage, so
   insulate the thread from cell−.
 - Final build MOSFET: DFN package with a thermal pad, Rds(on) < 15 mΩ at Vgs = 2.5 V.
-- Check Australia's vaping laws (pharmacy-only supply since July 2024) before stage 3.
+- Enclosure: plastic, with the 510 connector's body insulated from ground
+  (see review note 6), or move to high-side switching on the final PCB.
