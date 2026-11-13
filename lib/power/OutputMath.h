@@ -18,11 +18,13 @@ uint16_t effectiveOutputMv(uint16_t targetMv, uint16_t batteryMv);
 // (1 << bits) - 1 (arduino-esp32 ledcWrite maps that value to 100% on).
 uint32_t dutyToCounts(float duty, uint8_t bits);
 
-// Target-voltage presets, cycled with 3 clicks.
+// Target-voltage presets, cycled with 3 clicks. 3.6 V is the ceiling: above
+// that, oil cartridges scorch.
 class VoltagePresets {
  public:
   static constexpr uint8_t kCount = 5;
-  static constexpr uint16_t kMv[kCount] = {2400, 2800, 3200, 3600, 4000};
+  static constexpr uint8_t kDefaultIndex = 2;  // 3.0 V
+  static constexpr uint16_t kMv[kCount] = {2400, 2700, 3000, 3300, 3600};
 
   uint16_t currentMv() const { return kMv[index_]; }
   uint8_t index() const { return index_; }
@@ -33,7 +35,7 @@ class VoltagePresets {
   }
 
  private:
-  uint8_t index_ = 1;  // default 2.8 V
+  uint8_t index_ = kDefaultIndex;
 };
 
 }  // namespace puff

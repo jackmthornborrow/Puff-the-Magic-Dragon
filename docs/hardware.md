@@ -25,7 +25,7 @@ Build guides:
 | D8, D9 | 8, 9 | unused | Strapping pins (D9 = BOOT button) |
 
 ### Firmware changes this pin map needs
-1. **Button polarity:** the stage 1 code uses an internal pull-up with the button to GND. The hardware interlock needs the button to switch 3V3, so the pin reads **HIGH = pressed** with an external pull-down.
+1. ~~Button polarity~~ Done 2026-11-13: the firmware reads **HIGH = pressed**.
 2. **INA260, not INA219:** use a different library and registers. The board's built-in 2 mΩ shunt covers 15 A, so there's no shunt swap.
 3. **Coil-check calibration:** the 15 Ω resistor is ±5% (±0.75 Ω). Measure the 1.5 Ω dummy load once and store the correction. Read the INA260 at zero current at startup to remove its offset.
 

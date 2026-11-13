@@ -196,7 +196,7 @@ Eight jumper wires from J-MCU, plus one change on the breadboard.
 | B10 SDA | D4 | Shared with the OLED |
 | B12 CHK | D7 | |
 | B13 FIRE | D10 | Remove the stage 1 "coil" LED and its 330 Ω. Keep the 10 kΩ pull-down |
-| B14 BTN | The D1 side of the button (wiring 5B) | The button now feeds D1 and Q2's gate together |
+| B14 BTN | The D1 side of the button | The button now feeds D1 and Q2's gate together |
 
 The battery divider on D0 from the pin map is optional now: the INA260 reads
 battery voltage more accurately than the XIAO's ADC. If you want it as a

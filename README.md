@@ -8,7 +8,7 @@ No battery, no MOSFET, no cartridge.
 
 | Part | XIAO pin | Notes |
 |---|---|---|
-| Fire button | D1 (GPIO3) → button → GND | internal pull-up |
+| Fire button | 3V3 → button → D1 (GPIO3), 10 kΩ from D1 to GND | active-high; the same 3V3 drives the interlock FET in stage 2 |
 | "Coil" LED | D10 (GPIO10) → 330 Ω → LED → GND | PWM output; becomes the MOSFET gate in stage 2 |
 | Status LED | D2 (GPIO4) → 330 Ω → LED → GND | UI feedback. Keep it separate: UI blinks must never pulse a real coil |
 
@@ -25,7 +25,7 @@ pio device monitor                  # serial console, type 'help'
 ## Behaviour
 
 - **Hold** = fire. Output is PWM at 20 kHz, duty = (target V / battery V)², capped at 100%.
-- **3 clicks** = next voltage preset (2.4 / 2.8 / 3.2 / 3.6 / 4.0 V). Status LED blinks the preset number (1–5).
+- **3 clicks** = next voltage preset (2.4 / 2.7 / 3.0 / 3.3 / 3.6 V, default 3.0). Status LED blinks the preset number (1–5).
 - **5 clicks** = lock / unlock (3 short blinks = locked, 1 long = unlocked). Lock survives reboot.
 - **10 s cutoff**: output stops; you must release before it fires again.
 - Fires shorter than 300 ms (clicks) are not logged as puffs.
@@ -87,8 +87,8 @@ dropped file would be lost, so sync should run well before that).
 ## Notes for later stages
 
 - **Stage 2 HAL**: write `src/hal/Hal_stage2.cpp` (MOSFET on D10 with a 10 kΩ
-  gate pull-down so it stays off during boot/reset, INA219 for resistance, ADC
-  divider for battery, charge-detect). Set `PUFF_STAGE=2`; the stage 1 sim
+  gate pull-down so it stays off during boot/reset, INA260 for resistance and
+  battery voltage, charge-detect on D3). Set `PUFF_STAGE=2`; the stage 1 sim
   commands disappear and the build fails until the stage 2 HAL exists.
 - Resistance in stage 2 needs a short low-duty probe pulse before full fire;
   `Safety::requestFire` expects a measured value, `-1` if unknown (refuses).
@@ -98,4 +98,6 @@ dropped file would be lost, so sync should run well before that).
   pure ESP-IDF build. Worth deciding before stage 6; the partition table is
   already dual-OTA either way.
 - Nothing here turns the output on without `Safety` agreeing, and
-  `allowFireWhileCharging` stays `false` until that path is tested on the dummy load.
+  `allowFireWhileCharging` is `false` except in the bench build
+  (`pio run -e xiao_esp32c3_bench`), which exists so stage 2 can be tested with
+  USB serial attached. Never carry a device running the bench build.

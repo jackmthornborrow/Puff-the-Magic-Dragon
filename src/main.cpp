@@ -18,7 +18,18 @@
 
 using puff::FireBlock;
 
-static puff::Safety safety;
+// Bench builds (-DPUFF_BENCH=1, env xiao_esp32c3_bench) lift the charging
+// lockout so the board can fire with USB attached and serial open. Never
+// flash a bench build onto a device that leaves the bench.
+#ifndef PUFF_BENCH
+#define PUFF_BENCH 0
+#endif
+static puff::SafetyConfig makeSafetyConfig() {
+  puff::SafetyConfig cfg;
+  cfg.allowFireWhileCharging = (PUFF_BENCH != 0);
+  return cfg;
+}
+static puff::Safety safety(makeSafetyConfig());
 static puff::Debouncer debouncer(DEBOUNCE_MS);
 static puff::ClickCounter clicks(CLICK_MAX_MS, CLICK_GAP_MS);
 static puff::VoltagePresets presets;
@@ -138,6 +149,9 @@ static void printCsvRow(const PuffRecord& r, void*) {
 static void printStatus() {
   Serial.printf("Puff fw %s stage %d device %s boot %lu\n", FW_VERSION_STRING, PUFF_STAGE,
                 deviceId, (unsigned long)puffLog.bootId());
+#if PUFF_BENCH
+  Serial.println("*** BENCH BUILD: fires while USB is connected. Not for carrying. ***");
+#endif
   Serial.printf("locked=%d low_v_lockout=%d firing=%d target=%u mV\n", safety.locked(),
                 safety.lowVoltageLockout(), safety.firing(), presets.currentMv());
   Serial.printf("battery=%u mV charging=%d coil=%ld mOhm\n", hal::batteryMv(), hal::charging(),
@@ -225,7 +239,7 @@ void setup() {
 
   settings.begin("settings", false);
   safety.setLocked(settings.getBool("locked", false));  // lock survives reboot
-  presets.setIndex(settings.getUChar("preset", 1));
+  presets.setIndex(settings.getUChar("preset", puff::VoltagePresets::kDefaultIndex));
 
   if (!puffLog.begin()) Serial.println("ERROR: LittleFS/NVS init failed, puffs will not be logged");
 

@@ -2,7 +2,12 @@
 
 Notes from reading every file in the repo against the hardware plan. Ordered
 by how much each one matters. "Firmware" items are for whoever next works on
-the code; nothing in the code was changed.
+the code.
+
+**Update, same day:** items 1, 3, 4 (threshold only, no averaging yet) and 5
+are now fixed in the firmware. Presets are 2.4 / 2.7 / 3.0 / 3.3 / 3.6 V,
+the under-load cutoff is 3.2 V, the button is active-high, and
+`pio run -e xiao_esp32c3_bench` builds a version that fires with USB attached.
 
 ## Fix before stage 2
 

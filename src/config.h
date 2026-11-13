@@ -22,7 +22,8 @@ constexpr uint32_t kFwVersionPacked =
 // ---- Pins (Seeed XIAO ESP32-C3) -------------------------------------------
 // Avoid strapping pins GPIO2 (D0), GPIO8 (D8), GPIO9 (D9) for anything that
 // could be pulled at boot.
-constexpr uint8_t PIN_FIRE_BUTTON = 3;   // D1, button to GND, internal pull-up
+constexpr uint8_t PIN_FIRE_BUTTON = 3;   // D1, button to 3V3 (active-high), 10k pull-down.
+                                         // The same 3V3 drives the interlock FET gate.
 constexpr uint8_t PIN_OUTPUT = 10;       // D10, LED now / MOSFET gate in stage 2
 constexpr uint8_t PIN_STATUS_LED = 4;    // D2, separate UI LED (never blink the coil)
 

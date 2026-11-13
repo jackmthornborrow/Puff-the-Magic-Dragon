@@ -40,11 +40,11 @@ void test_duty_to_counts() {
 
 void test_presets_cycle_and_wrap() {
   VoltagePresets p;
-  TEST_ASSERT_EQUAL_UINT16(2800, p.currentMv());
-  TEST_ASSERT_EQUAL_UINT16(3200, p.next());
+  TEST_ASSERT_EQUAL_UINT16(3000, p.currentMv());
+  TEST_ASSERT_EQUAL_UINT16(3300, p.next());
   TEST_ASSERT_EQUAL_UINT16(3600, p.next());
-  TEST_ASSERT_EQUAL_UINT16(4000, p.next());
   TEST_ASSERT_EQUAL_UINT16(2400, p.next());
+  TEST_ASSERT_EQUAL_UINT16(2700, p.next());
 }
 
 void test_preset_out_of_range_resets_to_first() {
@@ -56,7 +56,7 @@ void test_preset_out_of_range_resets_to_first() {
 void test_all_presets_within_spec_range() {
   for (uint8_t i = 0; i < VoltagePresets::kCount; i++) {
     TEST_ASSERT_TRUE(VoltagePresets::kMv[i] >= 2400);
-    TEST_ASSERT_TRUE(VoltagePresets::kMv[i] <= 4000);
+    TEST_ASSERT_TRUE(VoltagePresets::kMv[i] <= 3600);  // oil scorches above this
   }
 }
 

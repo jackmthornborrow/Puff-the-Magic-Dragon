@@ -13,7 +13,9 @@ struct SafetyConfig {
   uint32_t maxFireMs = 10000;            // hard cutoff per press
   uint16_t lowVoltageCutoffMv = 3300;    // resting: lock out below this
   uint16_t lowVoltageRecoverMv = 3450;   // resting: clear lockout at/above this
-  uint16_t lowVoltageUnderLoadMv = 3000; // while firing: stop below this (sag)
+  uint16_t lowVoltageUnderLoadMv = 3200; // while firing: stop below this (sag).
+                                         // Not lower: the XIAO's 3.3 V regulator
+                                         // drops out near 3.0 V on the rail.
   int32_t minCoilMilliOhm = 800;         // below = short
   int32_t maxCoilMilliOhm = 4000;        // above = no cartridge / open circuit
   uint8_t lockClicks = 5;

@@ -125,7 +125,7 @@ void test_sag_under_load_tolerated_above_load_threshold() {
   Safety s;
   s.requestFire(ok(0));
   SafetyInputs in = ok(100);
-  in.batteryMv = 3100;  // below resting cutoff, above under-load cutoff
+  in.batteryMv = 3250;  // below resting cutoff, above under-load cutoff
   TEST_ASSERT_EQUAL(FireBlock::None, s.checkWhileFiring(in));
 }
 
@@ -133,7 +133,7 @@ void test_stops_when_sagging_below_load_threshold() {
   Safety s;
   s.requestFire(ok(0));
   SafetyInputs in = ok(100);
-  in.batteryMv = 2999;
+  in.batteryMv = 3199;
   TEST_ASSERT_EQUAL(FireBlock::LowVoltage, s.checkWhileFiring(in));
   TEST_ASSERT_FALSE(s.firing());
   TEST_ASSERT_TRUE(s.lowVoltageLockout());

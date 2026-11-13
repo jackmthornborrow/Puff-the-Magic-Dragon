@@ -1,4 +1,4 @@
-// Stage 1 HAL: USB powered, LED stands in for the coil, no battery or INA219.
+// Stage 1 HAL: USB powered, LED stands in for the coil, no battery or INA260.
 // Battery, charging and coil resistance are simulated values the serial
 // console can change.
 #include "config.h"
@@ -22,12 +22,14 @@ void begin() {
   ledcAttachPin(PIN_OUTPUT, PWM_CHANNEL);
   ledcWrite(PWM_CHANNEL, 0);
 
-  pinMode(PIN_FIRE_BUTTON, INPUT_PULLUP);
+  // Active-high: the button switches 3V3 onto the pin (and, from stage 2, onto
+  // the interlock FET gate). The internal pull-down backs up the external 10k.
+  pinMode(PIN_FIRE_BUTTON, INPUT_PULLDOWN);
   pinMode(PIN_STATUS_LED, OUTPUT);
   digitalWrite(PIN_STATUS_LED, LOW);
 }
 
-bool buttonRaw() { return digitalRead(PIN_FIRE_BUTTON) == LOW; }
+bool buttonRaw() { return digitalRead(PIN_FIRE_BUTTON) == HIGH; }
 uint16_t batteryMv() { return sBatteryMv; }
 bool charging() { return sCharging; }
 int32_t coilMilliOhm() { return sCoilMilliOhm; }
@@ -43,5 +45,5 @@ void simSetCharging(bool on) { sCharging = on; }
 }  // namespace hal
 
 #elif PUFF_STAGE >= 2
-#error "Stage 2 HAL (MOSFET, INA219, battery divider, charge detect) not written yet"
+#error "Stage 2 HAL (MOSFET, INA260, charge detect) not written yet"
 #endif

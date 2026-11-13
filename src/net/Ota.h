@@ -17,7 +17,7 @@ namespace ota {
 struct SelfCheck {
   bool button = false;   // pin reads, not stuck low
   bool pwm = false;      // LEDC channel configured
-  bool sensor = false;   // INA219 responds (stage 2+)
+  bool sensor = false;   // INA260 responds (stage 2+)
   bool logReadable = false;
   bool passed() const { return button && pwm && sensor && logReadable; }
 };

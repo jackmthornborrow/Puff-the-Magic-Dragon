@@ -12,11 +12,10 @@ wires, 2 LEDs (ideally different colours), 2 × 330 Ω, 2 × 10 kΩ, 1 × 20 kΩ
 (or two 10 kΩ in series), 1 tactile button, a USB-C **data** cable. The OLED
 joins in step 7 when it arrives.
 
-**The button has two wirings.** The firmware in this repo today expects the
-button to connect D1 to GND (5A). The final hardware needs it to connect 3V3
-to D1 (5B), because the same 3V3 will drive the interlock FET in stage 2.
-Build 5A now. Move to 5B when the firmware has been changed to active-high;
-with the wrong wiring the output behaves inverted (it fires when you let go).
+**The button switches 3V3, not ground.** Pressed = D1 high. The same 3V3
+will drive the interlock FET in stage 2, so the breadboard uses the final
+wiring from the start. (Firmware before 2026-11-13 expected the button to
+ground; flash the current firmware.)
 
 **Solder the battery wires first.** Stage 2 needs wires on the two BAT pads
 on the *underside* of the XIAO, between the D2–D4 pins. They are far easier
@@ -99,19 +98,23 @@ while the XIAO boots, so it is worth having in place from the start.
 
 **Test:** same trick as step 3: touch the resistor's D10 end to `+`, LED lights.
 
-### 5A. Fire button (today's firmware)
+### 5. Fire button (D1)
 
-One side of the button → D1. The other side → `−` rail. No resistor.
+- `+` rail (3V3) → button → D1.
+- D1 → 10 kΩ → `−` rail.
 
 A 4-leg tactile button has its legs joined in pairs. If the output is stuck
 on, turn the button a quarter turn.
+
+**Test first with the multimeter:** D1 to GND reads 0 V released and 3.3 V
+pressed.
 
 **Tests:**
 
 | Do this | You should see |
 |---|---|
 | Hold the button | Coil LED on while held. Serial prints a `puff #…` line on release if held over 0.3 s |
-| Click 3 times quickly | Status LED blinks the new preset number (1–5). The coil LED gets brighter with higher presets |
+| Click 3 times quickly | Status LED blinks the new preset number (1–5: 2.4, 2.7, 3.0, 3.3, 3.6 V; it starts on 3). The coil LED gets brighter with higher presets |
 | Click 5 times | 3 short blinks = locked. Holding now gives 2 fast blinks and no output. 5 clicks again = 1 long blink, unlocked |
 | Hold for 10 s | Output stops at 10 s, status LED blinks 4 times. Stays off until you release |
 | Type `sim batt 3200` | Holding the button is refused (6 fast blinks). `sim batt 3500` restores it |
@@ -142,14 +145,6 @@ sellers and getting VCC and GND swapped kills the display.
 
 **Test:** VCC to GND at the OLED reads 3.3 V and nothing gets warm. The
 screen stays dark, because the firmware does not drive it yet.
-
-### 5B. Final button wiring (after the firmware change)
-
-- `+` rail (3V3) → button → D1.
-- D1 → 10 kΩ → `−` rail.
-
-**Test:** multimeter from D1 to GND reads 0 V released and 3.3 V pressed.
-Then repeat the 5A test table.
 
 ## Not in stage 1
 

@@ -6,7 +6,7 @@ one source of energy; a fault found in phase A costs nothing, the same fault
 found in phase D costs parts.
 
 Phases A to D need no new firmware: they test the hardware by hand.
-Phase E needs the stage 2 firmware (INA260 support, active-high button).
+Phase E needs the stage 2 firmware (INA260 support), which is not written yet.
 
 ## Rules for the whole session
 
@@ -64,7 +64,7 @@ not fitted. No pack, no load. Plug in USB.
 |---|---|---|---|
 | B1 | V: J-MCU 3V3 to GND | 3.25–3.35 V | Unplug. Check for a short at A13 |
 | B2 | Touch the INA260 chip and the XIAO | Both cool | Unplug |
-| B3 | V: Q2 gate (Q17) to GND, button released, then pressed | 0 V, then 3.2–3.3 V | BTN wiring, button wiring 5B |
+| B3 | V: Q2 gate (Q17) to GND, button released, then pressed | 0 V, then 3.2–3.3 V | BTN wiring, button wiring (stage 1 step 5) |
 | B4 | V: Q1 gate (M17) to GND, idle | 0 V | D10 is being driven; check the firmware is idle |
 | B5 | V: Q3 gate (L12) to GND, idle | 0 V | |
 | B6 | Unplug USB. Put the meter on the Q1 gate, then plug USB back in and watch it through boot | Never rises above 0.2 V | Missing 10 kΩ pull-down |
@@ -130,8 +130,10 @@ figures for the firmware's voltage-drop compensation.
 ## Phase E: with stage 2 firmware
 
 Serial needs USB plugged in, and USB plugged in normally means "charging,
-refuse to fire". The stage 2 firmware needs a bench setting that lifts that
-lockout for E1 to E6; E8 then checks the lockout with the setting off.
+refuse to fire". Flash the bench build for E1 to E6
+(`pio run -e xiao_esp32c3_bench -t upload`; `status` prints a BENCH BUILD
+line). Flash the normal build again before E8, which checks the lockout, and
+before the device leaves the bench.
 
 | # | Do | Good |
 |---|---|---|
