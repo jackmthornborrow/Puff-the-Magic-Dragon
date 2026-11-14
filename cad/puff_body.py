@@ -44,6 +44,9 @@ USB = (9.0, 7.4, 3.2)            # receptacle W x L x H
 INA = (22.9, 22.8, 1.6)          # Adafruit INA260 (bench part; final PCB replaces it)
 BTN_BODY, BTN_CAP_D = 12.0, 9.6  # 12 mm tactile switch with round cap
 BTN_HOLE_D = 10.2
+BTN_DEPTH = 4.0                  # switch body depth behind the wall
+GAME_SETBACK = 2.0               # game switches sit this far behind the front wall
+GAME_X = (-8.3, 4.7)             # game button centres, relative to the column centre
 
 SCREW_PILOT, SCREW_CLEAR, SCREW_HEAD = 1.7, 2.3, 4.2   # M2 self-tapping
 BOSS_D = 5.0
@@ -103,7 +106,10 @@ for x, z in SCREWS[2:]:
 
 # front openings
 body -= Pos(X_COL, -T / 2, Z_WIN) * Box(OLED_WIN[0], 3 * WALL, OLED_WIN[1])
-body -= ycyl(BTN_HOLE_D, 3 * WALL, X_COL, Z_BTN, -T / 2 - WALL)
+for gx in GAME_X:                                   # two game buttons, front
+    body -= ycyl(BTN_HOLE_D, 3 * WALL, X_COL + gx, Z_BTN, -T / 2 - WALL)
+# fire button, right-hand side, under the thumb
+body -= Pos(W / 2, 0, Z_BTN) * Rot(Y=90) * Cylinder(BTN_HOLE_D / 2, 3 * WALL)
 # USB-C: slot for the receptacle plus a relief for the plug's overmould
 usb_slot = Pos(X_COL, Y_USB, -1) * extrude(RectangleRounded(USB[0] + 0.6, USB[2] + 0.5, 1.6), END_WALL + 2)
 usb_relief = Pos(X_COL, Y_USB, -1) * extrude(RectangleRounded(12.6, 7.0, 3.0), END_WALL - 1.2 + 1)
@@ -131,10 +137,13 @@ z_xiao = Z_CAV_BOT + XIAO[1] / 2
 xiao = (Pos(X_COL, Y_XIAO, z_xiao) * Box(XIAO[0], XIAO[2], XIAO[1])
         + Pos(X_COL, Y_USB, Z_CAV_BOT - 1.5 + USB[1] / 2) * Box(USB[0], USB[2], USB[1]))
 ina = Pos(X_COL, Y_XIAO, z_xiao + XIAO[1] / 2 + 2 + INA[1] / 2) * Box(INA[0], INA[2], INA[1])
-btn = (Pos(X_COL, Y_FRONT_IN + 2.0, Z_BTN) * Box(BTN_BODY, 4.0, BTN_BODY)
-       + ycyl(BTN_CAP_D, 4.5, X_COL, Z_BTN, -T / 2 - 1.0))
+game = [Pos(X_COL + gx, Y_FRONT_IN + GAME_SETBACK + BTN_DEPTH / 2, Z_BTN) * Box(BTN_BODY, BTN_DEPTH, BTN_BODY)
+        + ycyl(BTN_CAP_D, GAME_SETBACK + WALL + 1.5, X_COL + gx, Z_BTN, -T / 2 - 1.5) for gx in GAME_X]
+x_wall = X_COL0 + COL_W                         # inside of the right-hand wall
+fire = (Pos(x_wall - BTN_DEPTH / 2, 0, Z_BTN) * Box(BTN_DEPTH, BTN_BODY, BTN_BODY)
+        + Pos(x_wall + (WALL + 1.5) / 2, 0, Z_BTN) * Rot(Y=90) * Cylinder(BTN_CAP_D / 2, WALL + 1.5))
 parts = {"cell": cell, "connector": conn, "cartridge": cart, "oled": oled,
-         "xiao": xiao, "ina260": ina, "button": btn}
+         "xiao": xiao, "ina260": ina, "fire": fire, "game_a": game[0], "game_b": game[1]}
 
 # ------------------------------------------------------------------- CHECKS
 print(f"Body: {W:.1f} wide x {T:.1f} thick x {H:.1f} tall; cartridge stands {CART_L - CART_RECESS:.0f} above")
@@ -170,7 +179,7 @@ def drawing(shapes, eye, fname):
 
 
 allparts = list(parts.values())
-drawing([front, back, cart, btn], (-140, -260, 190), "view_outside.svg")
+drawing([front, back, cart, fire] + game, (-140, -260, 190), "view_outside.svg")
 drawing([back] + allparts, (-90, -300, 150), "view_inside.svg")
 
 
@@ -180,7 +189,7 @@ def preview(fname):
     import pyvista as pv
 
     colours = {"shell": "#2f6f8f", "cell": "#7cb342", "connector": "#b0892f", "cartridge": "#e6c66a",
-               "oled": "#10131f", "xiao": "#3a3a3a", "ina260": "#5e35b1", "button": "#d84315"}
+               "oled": "#10131f", "xiao": "#3a3a3a", "ina260": "#5e35b1", "fire": "#d84315", "game_a": "#f5f5f5", "game_b": "#f5f5f5"}
 
     def mesh(shape):
         verts, faces = shape.tessellate(0.05, 0.2)
@@ -189,10 +198,10 @@ def preview(fname):
         return pv.PolyData(v, f)
 
     shell = [("shell", front), ("shell", back)]
-    views = [("Outside", shell + [("cartridge", cart), ("button", btn), ("oled", oled)], (-0.45, -1, 0.35)),
+    views = [("Outside", shell + [("cartridge", cart), ("fire", fire), ("game_a", game[0]), ("game_b", game[1]), ("oled", oled)], (0.5, -1, 0.35)),
              ("Front half removed", [("shell", back)] + list(parts.items()), (-0.25, -1, 0.3)),
-             ("Back", shell + [("cartridge", cart)], (0.45, 1, 0.35)),
-             ("Underside", shell + [("xiao", xiao), ("button", btn)], (-0.3, -0.8, -1))]
+             ("Back", shell + [("cartridge", cart), ("fire", fire)], (0.45, 1, 0.35)),
+             ("Underside", shell + [("xiao", xiao), ("fire", fire), ("game_a", game[0]), ("game_b", game[1])], (0.3, -0.8, -1))]
     pl = pv.Plotter(off_screen=True, shape=(1, 4), window_size=(2200, 1000), border=False)
     for i, (title, items, d) in enumerate(views):
         pl.subplot(0, i)
