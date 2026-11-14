@@ -12,7 +12,9 @@ No battery, no MOSFET, no cartridge.
 | "Coil" LED | D10 (GPIO10) → 330 Ω → LED → GND | PWM output; becomes the MOSFET gate in stage 2 |
 | Status LED | D2 (GPIO4) → 330 Ω → LED → GND | UI feedback. Keep it separate: UI blinks must never pulse a real coil |
 
-Strapping pins D0/D8/D9 are left unused.
+| OLED (optional) | SDA → D4 (GPIO6), SCL → D5 (GPIO7), 3V3, GND | SSD1306 128×64 at 0x3C. Found at start-up; without it the firmware runs as before |
+
+D0, D8 and D9 are reserved (INA260 Alert, game buttons); see `docs/hardware.md`.
 
 ## Build / flash / test
 
@@ -40,6 +42,7 @@ Status LED: 2 fast blinks = refused (locked), 6 fast = refused/stopped by a safe
 | `log` | dump puff log as CSV |
 | `clear yes` | delete all puffs (IDs keep counting) |
 | `preset <0-4>` | set preset |
+| `i2c` | list devices on the I2C bus (OLED 0x3C, INA260 0x40) |
 | `sim batt <mV>` | stage 1 only: simulated battery voltage |
 | `sim ohm <mΩ>` | stage 1 only: simulated coil resistance, `-1` = sensor fault |
 | `sim chg <0\|1>` | stage 1 only: simulated USB charging |
@@ -58,6 +61,7 @@ lib/input/      Button.h          debounce, click groups (pure C++)
 src/main.cpp                      loop: inputs → safety → output; clicks; console
 src/hal/                          hardware access; stage 1 = simulated battery/coil/charging
 src/PuffLog.*                     LittleFS append-only log + NVS counters
+src/Display.*                     OLED status screen (battery, preset, puff count)
 src/net/WifiSync.h, Ota.h         stage 5 / 6 stubs
 test/                             Unity tests, run on host (env:native)
 partitions_ota.csv                nvs, otadata, 2 × 1.875 MB app (ota_0/ota_1), 128 KB LittleFS, coredump

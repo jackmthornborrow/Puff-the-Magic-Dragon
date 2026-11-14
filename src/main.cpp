@@ -5,8 +5,10 @@
 // this iteration.
 #include <Arduino.h>
 #include <Preferences.h>
+#include <esp_task_wdt.h>
 
 #include "Button.h"
+#include "Display.h"
 #include "OutputMath.h"
 #include "PuffLog.h"
 #include "Safety.h"
@@ -35,6 +37,10 @@ static puff::ClickCounter clicks(CLICK_MAX_MS, CLICK_GAP_MS);
 static puff::VoltagePresets presets;
 static PuffLog puffLog;
 static StatusLed status;
+static Display display;
+static uint32_t puffCount = 0;   // cached for the screen
+static uint32_t lastPuffMs = 0;
+constexpr uint32_t WATCHDOG_S = 8;  // loop stalled this long = reboot (output is off after reset)
 static Preferences settings;
 static char deviceId[13];
 
@@ -102,7 +108,9 @@ static void finishPuff(uint32_t now, FireBlock reason) {
   rec.battery_mv = puffNow.batteryMv;
   rec.end_reason = static_cast<uint8_t>(reason);
   rec.fw_version = kFwVersionPacked;
+  lastPuffMs = duration;
   if (puffLog.append(rec)) {
+    puffCount++;
     Serial.printf("puff #%lu %lu ms @ %u mV\n", (unsigned long)rec.id,
                   (unsigned long)duration, rec.output_mv);
   } else {
@@ -168,6 +176,7 @@ static void printHelp() {
       "  log               dump puff log as CSV\n"
       "  clear yes         delete all logged puffs\n"
       "  preset <0-4>      set target voltage preset\n"
+      "  i2c               list devices on the I2C bus\n"
 #if PUFF_STAGE == 1
       "  sim batt <mV>     simulated battery voltage\n"
       "  sim ohm <mOhm>    simulated coil resistance (-1 = sensor fault)\n"
@@ -191,10 +200,22 @@ static void handleCommand(char* line) {
   } else if (!strcmp(cmd, "clear")) {
     if (a1 && !strcmp(a1, "yes")) {
       puffLog.clear();
+      puffCount = 0;
       Serial.println("log cleared");
     } else {
       Serial.println("type 'clear yes' to delete all puffs");
     }
+  } else if (!strcmp(cmd, "i2c")) {
+    uint8_t found = 0;
+    for (uint8_t addr = 0x08; addr < 0x78; addr++) {
+      if (hal::i2cPresent(addr)) {
+        Serial.printf("  0x%02x%s\n", addr,
+                      addr == I2C_ADDR_OLED ? " (OLED)" : addr == 0x40 ? " (INA260)" : "");
+        found++;
+      }
+      esp_task_wdt_reset();
+    }
+    Serial.printf("%u device(s). Display %s.\n", found, display.present() ? "in use" : "not found at boot");
   } else if (!strcmp(cmd, "preset") && a1) {
     presets.setIndex(atoi(a1));
     settings.putUChar("preset", presets.index());
@@ -246,8 +267,14 @@ void setup() {
   // Never fire just because the button was already down at boot.
   if (hal::buttonRaw()) safety.requireRelease();
 
+  puffCount = puffLog.count();
+  display.begin();
+
   net::begin();
   ota::begin();
+
+  esp_task_wdt_init(WATCHDOG_S, true);
+  esp_task_wdt_add(nullptr);
 
   delay(200);
   printStatus();
@@ -256,6 +283,7 @@ void setup() {
 
 void loop() {
   const uint32_t now = millis();
+  esp_task_wdt_reset();
 
   pollSerial();
 
@@ -291,6 +319,18 @@ void loop() {
   if (uint8_t n = clicks.poll(now)) handleClicks(n, now);
 
   status.update(now);
+  if (!safety.firing()) {  // a redraw takes ~25 ms; never during a puff
+    DisplayView v;
+    v.targetMv = presets.currentMv();
+    v.batteryMv = hal::batteryMv();
+    v.puffs = puffCount;
+    v.lastPuffMs = lastPuffMs;
+    v.locked = safety.locked();
+    v.charging = hal::charging();
+    v.lowBattery = safety.lowVoltageLockout();
+    v.bench = PUFF_BENCH != 0;
+    display.update(now, v);
+  }
   net::tick(now, safety.firing(), puffLog);
   ota::tick(now);
 }

@@ -16,6 +16,7 @@ int32_t coilMilliOhm();          // < 0 = unknown (stage 1: simulated)
 void outputWrite(uint32_t counts);  // PWM counts, 0 = off
 void outputOff();
 void statusLed(bool on);
+bool i2cPresent(uint8_t addr);      // true if a device answers at addr
 
 #if PUFF_STAGE == 1
 // Bench simulation knobs, driven from the serial console, so the safety paths

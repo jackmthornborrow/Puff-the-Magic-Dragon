@@ -9,6 +9,12 @@ are now fixed in the firmware. Presets are 2.4 / 2.7 / 3.0 / 3.3 / 3.6 V,
 the under-load cutoff is 3.2 V, the button is active-high, and
 `pio run -e xiao_esp32c3_bench` builds a version that fires with USB attached.
 
+**Update 2026-11-14:** item 4 is complete (the cutoff now needs 40 ms below
+3.2 V, or one reading below 2.9 V). The watchdog from item 7 is on (8 s).
+The OLED shows battery, preset, puff count and last puff length, and `i2c`
+on the serial console lists the devices on the bus. None of this has run on
+hardware yet.
+
 ## Fix before stage 2
 
 ### 1. Button polarity: firmware and hardware disagree
@@ -124,16 +130,23 @@ FET runs hot, parallel a second one on top; there are four spares.
 
 ## Ideas for later
 
-- **Hardware over-current trip:** the INA260's Alert pin can be set to pull
-  low above a current limit. Wired to the interlock FET's gate (with R3 raised
-  to 2.2 kΩ so Alert can win), it cuts the output in about a millisecond
-  without the firmware. The stage 2 board already brings Alert to J-MCU.
-- **Preheat:** about 2.0 V for a few seconds on a double-click, for thick oil.
+- **Over-current trip:** the INA260's Alert pin can be set to pull low above
+  a current limit. **Do not wire Alert to the interlock FET's gate** (my
+  first suggestion, withdrawn 2026-11-14): Alert is an open-drain output with
+  a pull-up to 3V3, and that pull-up would hold the interlock FET on with the
+  button released, defeating the interlock. Wire Alert to D0 instead (J-MCU
+  pin 7, wire W11) and let the firmware cut the output on its interrupt.
+  Before relying on it, measure Alert to Vcc on the breakout with power off:
+  about 10 kΩ means the pull-up is fitted; if it reads open, add a 10 kΩ from
+  D0 to 3V3, because D0 must be high at boot.
+- **Preheat:** about 2.0 V for a few seconds, for thick oil. The interlock
+  means the coil only conducts while the button is held, so it has to be
+  "double-click, then hold", not a hands-off timer.
 - **Puff counter on the OLED:** today's count and seconds, battery percent,
   coil resistance, preset. The data is all there already.
-- **Game buttons:** D6 (through 1 kΩ) and D9 as planned, or D0 if the divider
-  goes. D9 is also BOOT, so a held game button at power-up enters the
-  bootloader; harmless but worth knowing.
+- **Game buttons:** D8 and D9, each to GND with the internal pull-up (see
+  the pin table in `hardware.md`). D9 is also BOOT, so holding that button at
+  power-up enters the bootloader; harmless but worth knowing.
 - **Antenna:** it must sit away from the cell and any metal, or Wi-Fi sync
   will be poor. Plan its spot in the enclosure early.
 - **Final PCB:** INA260 chip, DFN MOSFETs, charger and XIAO footprint on one

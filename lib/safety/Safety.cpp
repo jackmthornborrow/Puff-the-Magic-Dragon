@@ -50,6 +50,7 @@ FireBlock Safety::requestFire(const SafetyInputs& in) {
   if (b == FireBlock::None) {
     firing_ = true;
     fireStartMs_ = in.nowMs;
+    sagging_ = false;
   }
   return b;
 }
@@ -62,12 +63,25 @@ void Safety::stop() {
 FireBlock Safety::checkWhileFiring(const SafetyInputs& in) {
   if (!firing_) return FireBlock::NotFiring;
 
+  // Under-load sag must persist for lowVoltageHoldMs, unless it is severe.
+  bool lowNow = false;
+  if (in.batteryMv < cfg_.lowVoltageUnderLoadMv) {
+    if (!sagging_) {
+      sagging_ = true;
+      sagStartMs_ = in.nowMs;
+    }
+    lowNow = in.batteryMv < cfg_.lowVoltageHardMv ||
+             in.nowMs - sagStartMs_ >= cfg_.lowVoltageHoldMs;
+  } else {
+    sagging_ = false;
+  }
+
   FireBlock r = FireBlock::None;
   if (in.nowMs - fireStartMs_ >= cfg_.maxFireMs) {
     r = FireBlock::Timeout;
   } else if (in.charging && !cfg_.allowFireWhileCharging) {
     r = FireBlock::Charging;
-  } else if (in.batteryMv < cfg_.lowVoltageUnderLoadMv) {
+  } else if (lowNow) {
     r = FireBlock::LowVoltage;
     lowVoltage_ = true;
   } else {

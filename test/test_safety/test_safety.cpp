@@ -134,9 +134,34 @@ void test_stops_when_sagging_below_load_threshold() {
   s.requestFire(ok(0));
   SafetyInputs in = ok(100);
   in.batteryMv = 3199;
+  TEST_ASSERT_EQUAL(FireBlock::None, s.checkWhileFiring(in));  // first low sample: wait
+  in.nowMs = 100 + s.config().lowVoltageHoldMs;
   TEST_ASSERT_EQUAL(FireBlock::LowVoltage, s.checkWhileFiring(in));
   TEST_ASSERT_FALSE(s.firing());
   TEST_ASSERT_TRUE(s.lowVoltageLockout());
+}
+
+void test_brief_dip_under_load_does_not_stop() {
+  Safety s;
+  s.requestFire(ok(0));
+  SafetyInputs in = ok(100);
+  in.batteryMv = 3100;
+  TEST_ASSERT_EQUAL(FireBlock::None, s.checkWhileFiring(in));
+  in = ok(110);  // recovered: the timer must restart
+  TEST_ASSERT_EQUAL(FireBlock::None, s.checkWhileFiring(in));
+  in = ok(100 + s.config().lowVoltageHoldMs + 5);
+  in.batteryMv = 3100;
+  TEST_ASSERT_EQUAL(FireBlock::None, s.checkWhileFiring(in));
+  TEST_ASSERT_TRUE(s.firing());
+}
+
+void test_severe_sag_stops_at_once() {
+  Safety s;
+  s.requestFire(ok(0));
+  SafetyInputs in = ok(100);
+  in.batteryMv = 2899;
+  TEST_ASSERT_EQUAL(FireBlock::LowVoltage, s.checkWhileFiring(in));
+  TEST_ASSERT_FALSE(s.firing());
 }
 
 // ---- charging ------------------------------------------------------------------
@@ -221,6 +246,8 @@ int main(int, char**) {
   RUN_TEST(test_idle_update_tracks_lockout);
   RUN_TEST(test_sag_under_load_tolerated_above_load_threshold);
   RUN_TEST(test_stops_when_sagging_below_load_threshold);
+  RUN_TEST(test_brief_dip_under_load_does_not_stop);
+  RUN_TEST(test_severe_sag_stops_at_once);
   RUN_TEST(test_refuses_while_charging);
   RUN_TEST(test_stops_if_charger_plugged_mid_fire);
   RUN_TEST(test_refuses_short);

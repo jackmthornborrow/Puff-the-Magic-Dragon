@@ -5,6 +5,7 @@
 
 #if PUFF_STAGE == 1
 #include <Arduino.h>
+#include <Wire.h>
 
 #include "hal/Hal.h"
 
@@ -27,6 +28,9 @@ void begin() {
   pinMode(PIN_FIRE_BUTTON, INPUT_PULLDOWN);
   pinMode(PIN_STATUS_LED, OUTPUT);
   digitalWrite(PIN_STATUS_LED, LOW);
+
+  Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL, 400000);
+  Wire.setTimeOut(20);  // an empty bus must not stall the loop
 }
 
 bool buttonRaw() { return digitalRead(PIN_FIRE_BUTTON) == HIGH; }
@@ -37,6 +41,11 @@ int32_t coilMilliOhm() { return sCoilMilliOhm; }
 void outputWrite(uint32_t counts) { ledcWrite(PWM_CHANNEL, counts); }
 void outputOff() { ledcWrite(PWM_CHANNEL, 0); }
 void statusLed(bool on) { digitalWrite(PIN_STATUS_LED, on ? HIGH : LOW); }
+
+bool i2cPresent(uint8_t addr) {
+  Wire.beginTransmission(addr);
+  return Wire.endTransmission() == 0;
+}
 
 void simSetBatteryMv(uint16_t mv) { sBatteryMv = mv; }
 void simSetCoilMilliOhm(int32_t mOhm) { sCoilMilliOhm = mOhm; }

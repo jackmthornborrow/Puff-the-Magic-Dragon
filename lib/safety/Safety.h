@@ -16,6 +16,9 @@ struct SafetyConfig {
   uint16_t lowVoltageUnderLoadMv = 3200; // while firing: stop below this (sag).
                                          // Not lower: the XIAO's 3.3 V regulator
                                          // drops out near 3.0 V on the rail.
+  uint16_t lowVoltageHoldMs = 40;        // ...but only once it has stayed below for
+                                         // this long, so one noisy sample can't end a puff
+  uint16_t lowVoltageHardMv = 2900;      // while firing: stop at once below this
   int32_t minCoilMilliOhm = 800;         // below = short
   int32_t maxCoilMilliOhm = 4000;        // above = no cartridge / open circuit
   uint8_t lockClicks = 5;
@@ -88,6 +91,8 @@ class Safety {
   bool awaitRelease_ = false;
   bool lowVoltage_ = false;
   uint32_t fireStartMs_ = 0;
+  bool sagging_ = false;       // battery currently below the under-load cutoff
+  uint32_t sagStartMs_ = 0;
 };
 
 }  // namespace puff

@@ -156,7 +156,7 @@ Any thin hookup wire (24–28 AWG). Only the two ends matter.
 | W8 | H13 | M16 | FIRE to Q1 gate |
 | W9 | H14 | Q16 | BTN to Q2 gate |
 | W10 | R16 | L14 | R7 to Q3 drain |
-| (W11) | B11 | O11 | INA260 Alert. Optional, not used yet |
+| (W11) | B11 | O11 | INA260 Alert, to D0. Optional, not used by the firmware yet. Never connect Alert to a FET gate |
 
 Leave O12 (VBus) and O14 (Vin−) with nothing soldered but the pin itself.
 The INA260 already links VBus to Vin+ on its own board, which is what we want:
@@ -198,10 +198,10 @@ Eight jumper wires from J-MCU, plus one change on the breadboard.
 | B13 FIRE | D10 | Remove the stage 1 "coil" LED and its 330 Ω. Keep the 10 kΩ pull-down |
 | B14 BTN | The D1 side of the button | The button now feeds D1 and Q2's gate together |
 
-The battery divider on D0 from the pin map is optional now: the INA260 reads
-battery voltage more accurately than the XIAO's ADC. If you want it as a
-backup, fit it on the breadboard: VBATT → 220 kΩ → D0 → 220 kΩ → GND, with
-100 nF from D0 to GND.
+There is no battery divider: the INA260 reads battery voltage more
+accurately than the XIAO's ADC. D0 is reserved for the INA260's Alert
+(B11, optional, see the pin table in `hardware.md`). Leave B11 unconnected
+until the firmware uses it.
 
 ## Dummy load
 

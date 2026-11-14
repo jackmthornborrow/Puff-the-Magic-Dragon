@@ -17,17 +17,19 @@ Build guides:
 | D10 | 10 | Main MOSFET gate (stage 1: "coil" LED) | 100 Ω series, **10 kΩ pull-down to GND** so it stays off during boot/reset |
 | D2 | 4 | Status LED | 330 Ω → LED → GND. The XIAO C3 has no user LED |
 | D1 | 3 | Fire button, **active-high** | Button connects 3V3 → D1 with a 10 kΩ pull-down. The same 3V3 drives the interlock FET gate (see below). Can wake from deep sleep (the C3 only wakes on GPIO0–5) |
-| D0 | 2 | Battery voltage divider (optional) | ADC1. 220 k / 220 k + 100 nF. Strapping pin, input only. The INA260's bus voltage is the better battery reading |
+| D0 | 2 | INA260 Alert (stage 2, optional) | Input. Strapping pin that must be high at boot, which Alert's pull-up gives. The battery divider once planned here is dropped: the INA260 reads battery voltage better |
 | D3 | 5 | USB-present sense | 5 V → 10 k / 20 k divider → D3. Needed for "never fire while charging" |
 | D4 / D5 | 6 / 7 | I2C SDA / SCL | INA260 (0x40) + SSD1306 OLED (0x3C) |
 | D7 | 20 | Resistance-check MOSFET gate | 100 kΩ pull-down |
+| D8 | 8 | Game button A | Button to GND, internal pull-up (pressed = LOW). Strapping pin, but holding it at power-up is harmless on its own |
+| D9 | 9 | Game button B | Button to GND, internal pull-up. This is also the BOOT pin: holding B while plugging in or resetting starts the bootloader instead of Puff. Unplug and replug to recover |
 | D6 | 21 | spare | UART TX toggles at boot, so don't use it for outputs |
-| D8, D9 | 8, 9 | unused | Strapping pins (D9 = BOOT button) |
 
 ### Firmware changes this pin map needs
 1. ~~Button polarity~~ Done 2026-11-13: the firmware reads **HIGH = pressed**.
 2. **INA260, not INA219:** use a different library and registers. The board's built-in 2 mΩ shunt covers 15 A, so there's no shunt swap.
-3. **Coil-check calibration:** the 15 Ω resistor is ±5% (±0.75 Ω). Measure the 1.5 Ω dummy load once and store the correction. Read the INA260 at zero current at startup to remove its offset.
+3. **Game buttons** on D8 and D9 are active-low, the opposite of the fire button. Not in the firmware yet.
+4. **Coil-check calibration:** the 15 Ω resistor is ±5% (±0.75 Ω). Measure the 1.5 Ω dummy load once and store the correction. Read the INA260 at zero current at startup to remove its offset.
 
 ## Power path (stage 2)
 

@@ -143,15 +143,25 @@ sellers and getting VCC and GND swapped kills the display.
 - OLED SDA → D4
 - OLED SCL → D5
 
-**Test:** VCC to GND at the OLED reads 3.3 V and nothing gets warm. The
-screen stays dark, because the firmware does not drive it yet.
+**Tests:**
+
+- VCC to GND at the OLED reads 3.3 V and nothing gets warm.
+- Unplug and replug USB (the display is only looked for at start-up). The
+  screen shows battery at the top, the preset voltage in large digits, and
+  the puff count at the bottom.
+- Type `i2c`: it lists `0x3c (OLED)`. If it lists nothing, SDA and SCL are
+  swapped or one is loose.
+- Click 3 times: the large voltage changes. Click 5 times: it shows LOCKED.
+- The screen does not change during a puff; it updates when you let go.
 
 ## Not in stage 1
 
-- **D0 battery divider:** there is no battery yet. See the stage 2 layout.
+- **D0:** reserved for the INA260's Alert in stage 2. Keep empty.
 - **D7 resistance check:** stage 2.
-- **D6, D8, D9:** keep empty. D9 is the BOOT pin, and anything pulling
-  D8 or D9 low can stop the board from starting.
+- **D8, D9:** reserved for the two game buttons (each to GND). The firmware
+  does not read them yet. D9 is the BOOT pin: if it is low when the board
+  powers up, the bootloader starts instead of Puff.
+- **D6:** keep empty.
 
 ## When it all works
 

@@ -27,6 +27,10 @@ constexpr uint8_t PIN_FIRE_BUTTON = 3;   // D1, button to 3V3 (active-high), 10k
 constexpr uint8_t PIN_OUTPUT = 10;       // D10, LED now / MOSFET gate in stage 2
 constexpr uint8_t PIN_STATUS_LED = 4;    // D2, separate UI LED (never blink the coil)
 
+constexpr uint8_t PIN_I2C_SDA = 6;       // D4: OLED 0x3C, INA260 0x40 (stage 2)
+constexpr uint8_t PIN_I2C_SCL = 7;       // D5
+constexpr uint8_t I2C_ADDR_OLED = 0x3C;
+
 // ---- PWM ------------------------------------------------------------------
 constexpr uint8_t PWM_CHANNEL = 0;
 constexpr uint32_t PWM_FREQ_HZ = 20000;
