@@ -3,3 +3,6 @@
 *.bin
 !partitions_ota.csv
 docs/parts-photos.html
+cad/.venv/
+cad/out/*
+!cad/out/preview.png
